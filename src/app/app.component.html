@@ -1,0 +1,78 @@
+<main class="container">
+  <header>
+    <p class="eyebrow">Actividad 2 · Angular Reactive Forms</p>
+    <h1>Registro de productos</h1>
+    <p class="intro">Completa los datos del producto. Los campos se validan antes de enviarse al backend simulado.</p>
+  </header>
+
+  <section class="layout">
+    <form [formGroup]="formularioProducto" (ngSubmit)="guardarProducto()" novalidate>
+      <div class="field">
+        <label for="nombre">Nombre *</label>
+        <input id="nombre" type="text" formControlName="nombre"
+          [class.invalid]="esInvalido('nombre')" [class.valid]="formularioProducto.controls.nombre.valid && formularioProducto.controls.nombre.dirty">
+        <div class="error" *ngIf="esInvalido('nombre')">
+          <span *ngIf="formularioProducto.controls.nombre.errors?.['required']">El nombre es obligatorio.</span>
+          <span *ngIf="formularioProducto.controls.nombre.errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="descripcion">Descripción *</label>
+        <textarea id="descripcion" rows="3" formControlName="descripcion" [class.invalid]="esInvalido('descripcion')"></textarea>
+        <div class="error" *ngIf="esInvalido('descripcion')">
+          <span *ngIf="formularioProducto.controls.descripcion.errors?.['required']">La descripción es obligatoria.</span>
+          <span *ngIf="formularioProducto.controls.descripcion.errors?.['minlength']">Debe tener al menos 10 caracteres.</span>
+        </div>
+      </div>
+
+      <div class="two-columns">
+        <div class="field">
+          <label for="precio">Precio *</label>
+          <input id="precio" type="number" min="1" formControlName="precio" [class.invalid]="esInvalido('precio')">
+          <div class="error" *ngIf="esInvalido('precio')">
+            <span *ngIf="formularioProducto.controls.precio.errors?.['required']">El precio es obligatorio.</span>
+            <span *ngIf="formularioProducto.controls.precio.errors?.['min']">Debe ser mayor que 0.</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="stock">Stock *</label>
+          <input id="stock" type="number" min="0" formControlName="stock" [class.invalid]="esInvalido('stock')">
+          <div class="error" *ngIf="esInvalido('stock')">
+            <span *ngIf="formularioProducto.controls.stock.errors?.['required']">El stock es obligatorio.</span>
+            <span *ngIf="formularioProducto.controls.stock.errors?.['min']">No puede ser negativo.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="categoria">Categoría *</label>
+        <select id="categoria" formControlName="categoria" [class.invalid]="esInvalido('categoria')">
+          <option value="">-- Selecciona una categoría --</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+        </select>
+        <div class="error" *ngIf="esInvalido('categoria')">Debes seleccionar una categoría.</div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="secondary" (click)="limpiarFormulario()">Limpiar</button>
+        <button type="submit">Guardar producto</button>
+      </div>
+      <p class="success" *ngIf="mensajeExito">Producto enviado y guardado correctamente.</p>
+    </form>
+
+    <aside>
+      <h2>Productos registrados</h2>
+      <p class="empty" *ngIf="productos.length === 0">Aún no hay productos registrados.</p>
+      <table *ngIf="productos.length > 0">
+        <thead><tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let producto of productos">
+            <td>{{ producto.nombre }}</td><td>{{ producto.categoria }}</td>
+            <td>Q{{ producto.precio | number: '1.2-2' }}</td><td>{{ producto.stock }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </aside>
+  </section>
+</main>
